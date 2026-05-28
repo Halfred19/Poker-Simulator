@@ -8,22 +8,42 @@ import { BOARD_LABELS } from '../logic/deck.js'
  *   cards         {Array<card|null>}  - 5 slot del board
  *   activeBoardIdx{number|null}       - indice dello slot attivo (0–4) o null
  *   onSlotClick   {function(bi)}      - click su uno slot
- *   onRandomize   {function}          - click su "Casuale board"
+ *   onReveal      {function}          - mostra la prossima fase (flop/turn/river)
+ *   onHide        {function}          - nasconde l'ultima fase rivelata
  */
 export default function BoardSection({
   cards,
   activeBoardIdx,
   onSlotClick,
-  onRandomize,
+  onReveal,
+  onHide,
 }) {
+  const filled = cards.filter((c) => c).length
+  const canReveal = filled < 5
+  const canHide = filled > 0
+
   return (
     <div className="panel mb-16">
       <div className="flex-between mb-8">
         <p className="section-label">Board</p>
-        <button className="icon-btn" onClick={onRandomize}>
-          <i className="ti ti-dice" aria-hidden="true" />
-          Casuale
-        </button>
+        <div className="flex-row gap-8">
+          <button
+            className="icon-btn"
+            onClick={onReveal}
+            disabled={!canReveal}
+          >
+            <i className="ti ti-dice" aria-hidden="true" />
+            Casuale
+          </button>
+          <button
+            className="icon-btn icon-btn--danger"
+            onClick={onHide}
+            disabled={!canHide}
+          >
+            <i className="ti ti-trash" aria-hidden="true" />
+            Rimuovi
+          </button>
+        </div>
       </div>
 
       <div className="board-grid">

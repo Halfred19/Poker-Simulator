@@ -15,6 +15,7 @@ export default function CardPicker({
   usedKeys,
   selectedKey,
   onSelect,
+  onRandomize,
   onClose,
 }) {
   return (
@@ -23,6 +24,13 @@ export default function CardPicker({
       <div className="picker-header">
         <span className="picker-title">{label}</span>
         <div className="flex-row gap-8">
+          <button
+            onClick={onRandomize}
+            className="icon-btn"
+          >
+            <i className="ti ti-dice" aria-hidden="true" />
+            Casuale
+          </button>
           {selectedKey && (
             <button
               onClick={() => onSelect(null)}

@@ -79,6 +79,16 @@ export default function App() {
     setResults(null)
   }, [activeSlot])
 
+  const handleRandomizeSlot = useCallback(() => {
+    // Pesca una carta a caso tra quelle ancora disponibili nel picker.
+    // pickerUsedKeys esclude già la carta correntemente nello slot attivo,
+    // quindi è ok ripescare la stessa: la rimpiazzerà comunque con una nuova.
+    const avail = FULL_DECK.filter((c) => !pickerUsedKeys.has(cardKey(c)))
+    if (avail.length === 0) return
+    const pick = avail[Math.floor(Math.random() * avail.length)]
+    handlePickCard(pick)
+  }, [pickerUsedKeys, handlePickCard])
+
   const handleRandomizePlayer = useCallback((pi) => {
     // Esclude le carte degli altri giocatori e del board
     const skip = new Set()
@@ -96,13 +106,54 @@ export default function App() {
     setResults(null)
   }, [playerCards, boardCards, numPlayers])
 
-  const handleRandomizeBoard = useCallback(() => {
+  const handleRevealBoard = useCallback(() => {
+    // Conta le carte già presenti sul board.
+    // Target progressivo: 0/1/2 → flop completo (3), 3 → turn (4), 4 → river (5).
+    const filled = boardCards.filter((c) => c).length
+    if (filled >= 5) return
+    const target = filled < 3 ? 3 : filled + 1
+    const needed = target - filled
+
     const skip = new Set()
     playerCards.slice(0, numPlayers).flat().forEach((c) => c && skip.add(cardKey(c)))
+    boardCards.forEach((c) => c && skip.add(cardKey(c)))
     const avail = shuffle(FULL_DECK.filter((c) => !skip.has(cardKey(c))))
-    setBoardCards([avail[0], avail[1], avail[2], avail[3], avail[4]])
+
+    setBoardCards((prev) => {
+      const next = [...prev]
+      let pick = 0
+      let toFill = needed
+      for (let i = 0; i < next.length && toFill > 0; i++) {
+        if (!next[i]) {
+          next[i] = avail[pick++] ?? null
+          toFill--
+        }
+      }
+      return next
+    })
     setResults(null)
-  }, [playerCards, numPlayers])
+  }, [playerCards, boardCards, numPlayers])
+
+  const handleHideBoard = useCallback(() => {
+    // Target inverso: 5 → 4 (toglie river), 4 → 3 (toglie turn), 1/2/3 → 0 (toglie flop).
+    const filled = boardCards.filter((c) => c).length
+    if (filled === 0) return
+    const target = filled === 5 ? 4 : filled === 4 ? 3 : 0
+    const toClear = filled - target
+
+    setBoardCards((prev) => {
+      const next = [...prev]
+      let remaining = toClear
+      for (let i = next.length - 1; i >= 0 && remaining > 0; i--) {
+        if (next[i]) {
+          next[i] = null
+          remaining--
+        }
+      }
+      return next
+    })
+    setResults(null)
+  }, [boardCards])
 
   const handleChangeNumPlayers = useCallback((n) => {
     setNumPlayers(n)
@@ -203,6 +254,7 @@ export default function App() {
                 usedKeys={pickerUsedKeys}
                 selectedKey={activeCardKey}
                 onSelect={handlePickCard}
+                onRandomize={handleRandomizeSlot}
                 onClose={() => setActiveSlot(null)}
               />
             )}
@@ -217,7 +269,8 @@ export default function App() {
           activeSlot?.type === 'board' ? activeSlot.bi : null
         }
         onSlotClick={(bi) => handleSlotClick({ type: 'board', bi })}
-        onRandomize={handleRandomizeBoard}
+        onReveal={handleRevealBoard}
+        onHide={handleHideBoard}
       />
       {activeSlot?.type === 'board' && (
         <CardPicker
@@ -225,6 +278,7 @@ export default function App() {
           usedKeys={pickerUsedKeys}
           selectedKey={activeCardKey}
           onSelect={handlePickCard}
+          onRandomize={handleRandomizeSlot}
           onClose={() => setActiveSlot(null)}
         />
       )}
