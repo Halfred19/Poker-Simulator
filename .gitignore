@@ -1,0 +1,19 @@
+# Dipendenze
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+
+# Log
+*.log
+npm-debug.log*
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Istruzioni interne per Claude Code (non condivise)
+CLAUDE.md
