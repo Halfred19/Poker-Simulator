@@ -1,37 +1,36 @@
 # 🃏 Poker Texas Hold'em Simulator
 
-Simulatore di mani Texas Hold'em con calcolo delle probabilità di vittoria tramite Monte Carlo simulation .
+Texas Hold'em hand simulator that computes win probabilities via Monte Carlo simulation.
 
-## 🎮 Prova online
+## 🎮 Try it online
 
-👉 **[Apri il simulatore](https://Halfred19.github.io/Poker-Simulator/)**
+👉 **[Open the simulator](https://Halfred19.github.io/Poker-Simulator/)**
 
-Nessuna installazione richiesta: si apre direttamente nel browser.
+No installation required: it runs directly in your browser.
 
-## Funzionalità
+## Features
 
-- **2–6 giocatori** configurabili
-- Carte assegnabili **manualmente** (selettore) o **casualmente** per ogni giocatore e per il board
-- Carte del board (**Flop / Turn / River**) impostabili singolarmente o randomizzabili
-- Probabilità di vittoria e **equity** calcolate con 10 000 simulazioni Monte Carlo
-- Visualizzazione della **mano esatta** quando tutte le 7 carte sono note
+- **2–6 players** configurable
+- Cards can be assigned **manually** (picker) or **randomly** for each player and the board
+- Board cards (**Flop / Turn / River**) can be set individually or randomized
+- Win probability and **equity** calculated with 10,000 Monte Carlo simulations
+- Display of the **exact hand** when all 7 cards are known
 
-## Sviluppo locale
+## Local development
 
-Solo se vuoi modificare il codice (richiede [Node.js](https://nodejs.org/) installato):
+Only if you want to modify the code (requires [Node.js](https://nodejs.org/) installed):
 
 ```bash
 npm install
 npm run dev
 ```
 
-Apri [http://localhost:5173](http://localhost:5173).
+Open [http://localhost:5173](http://localhost:5173).
 
-Ad ogni push su `main`, GitHub Actions ribuilda e ripubblica automaticamente il sito.
+On every push to `main`, GitHub Actions automatically rebuilds and redeploys the site.
 
 ## Stack
 
 - [React 18](https://react.dev/) + [Vite 5](https://vitejs.dev/)
-- Logica di gioco pura in JavaScript (nessuna libreria esterna)
-- [Tabler Icons](https://tabler.io/icons) per l'UI
-
+- Pure JavaScript game logic (no external libraries)
+- [Tabler Icons](https://tabler.io/icons) for the UI
