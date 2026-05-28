@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { Fragment, useState, useMemo, useCallback } from 'react'
 
 import PlayerRow from './components/PlayerRow.jsx'
 import BoardSection from './components/BoardSection.jsx'
@@ -184,19 +184,29 @@ export default function App() {
       <div className="panel mb-16">
         <p className="section-label mb-8">Carte dei giocatori</p>
         {Array.from({ length: numPlayers }, (_, pi) => (
-          <PlayerRow
-            key={pi}
-            playerIndex={pi}
-            cards={playerCards[pi]}
-            activeCardIdx={
-              activeSlot?.type === 'player' && activeSlot.pi === pi
-                ? activeSlot.ci
-                : null
-            }
-            hand={getExactHand(pi)}
-            onSlotClick={(ci) => handleSlotClick({ type: 'player', pi, ci })}
-            onRandomize={() => handleRandomizePlayer(pi)}
-          />
+          <Fragment key={pi}>
+            <PlayerRow
+              playerIndex={pi}
+              cards={playerCards[pi]}
+              activeCardIdx={
+                activeSlot?.type === 'player' && activeSlot.pi === pi
+                  ? activeSlot.ci
+                  : null
+              }
+              hand={getExactHand(pi)}
+              onSlotClick={(ci) => handleSlotClick({ type: 'player', pi, ci })}
+              onRandomize={() => handleRandomizePlayer(pi)}
+            />
+            {activeSlot?.type === 'player' && activeSlot.pi === pi && (
+              <CardPicker
+                label={pickerLabel}
+                usedKeys={pickerUsedKeys}
+                selectedKey={activeCardKey}
+                onSelect={handlePickCard}
+                onClose={() => setActiveSlot(null)}
+              />
+            )}
+          </Fragment>
         ))}
       </div>
 
@@ -209,9 +219,7 @@ export default function App() {
         onSlotClick={(bi) => handleSlotClick({ type: 'board', bi })}
         onRandomize={handleRandomizeBoard}
       />
-
-      {/* Card Picker — appare quando uno slot è attivo */}
-      {activeSlot && (
+      {activeSlot?.type === 'board' && (
         <CardPicker
           label={pickerLabel}
           usedKeys={pickerUsedKeys}
